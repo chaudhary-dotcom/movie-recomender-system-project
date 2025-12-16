@@ -4,6 +4,13 @@ import requests
 import pandas as pd
 import requests
 
+
+# load data 
+movies_dict = pickle.load(open('movies_dict.pkl', 'rb'))
+movies = pd.DataFrame(movies_dict)
+
+similarity = pickle.load(open('similarity.pkl', 'rb'))
+
 def fetch_poster(movie_id):
     response = requests.get('https://api.themoviedb.org/3/movie/{}?api_key=bc057d1781cd468eebec479e505241a4'.format(movie_id))
     data = response.json()
@@ -29,21 +36,6 @@ def recommended(movie):
         recommended_movie_poster.append(fetch_poster(movie_id))
     return recommended_movies, recommended_movie_poster
 
-# Genra based recomendation 
-def recommend_by_genra(selected_genra):
-    filtered = movies[movies['genres'].apply(lambda x: selected_genra in x)]
-
-    filtered = filtered.head(5)
-
-    names = filtered['title'].values
-    posters = [fetch_poster(mid) for mid in filtered['movies_id'].values]
-    return names, posters
-
-# load data
-movies_dict = pickle.load(open('movie_dict.pkl', 'rb'))
-movies = pd.DataFrame(movies_dict)
-
-similarity = pickle.load(open('similarity.pkl', 'rb'))
 
 st.title('Movie Recomender System')
 
